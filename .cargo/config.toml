@@ -1,0 +1,10 @@
+[target.thumbv7em-none-eabihf]
+runner = 'probe-rs run --chip STM32H723ZG'
+# runner = 'probe-rs run --chip STM32H745ZI'
+# runner = 'probe-rs run --chip STM32H7S7L8Hx'
+
+[build]
+target = "thumbv7em-none-eabihf" # Cortex-M4F and Cortex-M7F (with FPU)
+
+[env]
+DEFMT_LOG = "trace"

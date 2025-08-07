@@ -1,0 +1,17 @@
+{
+    "[toml]": {
+        "editor.formatOnSave": false
+    },
+    "[markdown]": {
+        "editor.formatOnSave": false
+    },
+    "rust-analyzer.check.allTargets": false,
+    "rust-analyzer.check.noDefaultFeatures": true,
+    "rust-analyzer.cargo.noDefaultFeatures": true,
+    "rust-analyzer.showUnlinkedFileNotification": false,
+    "rust-analyzer.cargo.target": "thumbv7em-none-eabihf",
+    "rust-analyzer.cargo.features": [],
+    "rust-analyzer.linkedProjects": [
+        // "examples/stm32h7/Cargo.toml",
+    ],
+}

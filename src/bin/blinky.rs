@@ -23,46 +23,13 @@
 // # RUST
 // use mylib::i2c;
 // use mylib::i2c::I2c;
-
+mod led;  // Tells the compiler to look for a file called led.rs
+use led::Led;
 use cortex_m_rt::entry;
 use panic_reset as _;
 use stm32h7xx_hal::{pac, prelude::*};
 use rtt_target::{rtt_init_log, rprintln};
 use log::{info, LevelFilter};
-
-use stm32h7xx_hal::hal::blocking::delay::DelayMs;
-use stm32h7xx_hal::hal::digital::v2::OutputPin;
-
-// Structs
-// Structs are basically classes
-struct Led<PIN, D> {
-    pin: PIN,
-    delay: D,
-}
-
-impl<PIN, D> Led<PIN, D>
-where
-    PIN: OutputPin,
-    D: DelayMs<u16>,
-{
-    fn new(pin: PIN, delay: D) -> Self {
-        Self { pin, delay }
-    }
-
-    /// Blinks the LED by setting it high, waiting for `ms` milliseconds,
-    /// setting it low, and waiting for `ms` milliseconds again.
-    ///
-    /// # Arguments
-    ///
-    /// * `ms`: The number of milliseconds to wait between each blink.
-    fn blink(&mut self, ms: u16) {
-        self.pin.set_high().ok();
-        self.delay.delay_ms(ms);
-        self.pin.set_low().ok();
-        self.delay.delay_ms(ms);
-    }
-}
-
 
 #[entry]
 fn main() -> ! {
@@ -86,9 +53,9 @@ fn main() -> ! {
     info!("Setting up clock...");
     let rcc = dp.RCC.constrain();
     let ccdr = rcc.sys_ck(100.MHz()).freeze(pwrcfg, &dp.SYSCFG);
-    let gpioe = dp.GPIOE.split(ccdr.peripheral.GPIOE);
 
     // LED class
+    let gpioe = dp.GPIOE.split(ccdr.peripheral.GPIOE);
     let led_pin = gpioe.pe1.into_push_pull_output();
     let delay = cp.SYST.delay(ccdr.clocks);
     let mut led = Led::new(led_pin, delay);
@@ -100,7 +67,7 @@ fn main() -> ! {
     rprintln!();
 
     loop {
-        led.blink(1000);
+        led.blink(200);
 
         // Smaller loop for the print statmements
         count += 1;

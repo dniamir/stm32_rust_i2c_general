@@ -27,24 +27,30 @@
 use cortex_m_rt::entry;
 use panic_reset as _;
 use stm32h7xx_hal::{pac, prelude::*};
-use rtt_target::{rtt_init_print, rprintln};
+use rtt_target::{rtt_init_log, rprintln};
+use log::{info, LevelFilter};
 
 
 #[entry]
 fn main() -> ! {
 
+    // Set up RTT log backend
+    rtt_init_log!(LevelFilter::Info);
+
     // Initialize printing
-    rtt_init_print!();
     rprintln!("Program start");
+    rprintln!();
 
     let cp = cortex_m::Peripherals::take().unwrap();  // cp is the core peripherals
     let dp = pac::Peripherals::take().unwrap();  // dp is the device peripherals
 
     // Constrain and Freeze power
+    info!("Setting up power...");
     let pwr = dp.PWR.constrain();
     let pwrcfg = pwr.ldo().freeze();
 
     // Constrain and Freeze clock
+    info!("Setting up clock...");
     let rcc = dp.RCC.constrain();
     let ccdr = rcc.sys_ck(100.MHz()).freeze(pwrcfg, &dp.SYSCFG);
 
@@ -58,6 +64,9 @@ fn main() -> ! {
 
     // Loop variable
     let mut count = 0;
+
+    info!("Start Loop...");
+    rprintln!();
 
     loop {
         led.set_high();

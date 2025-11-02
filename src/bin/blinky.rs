@@ -1,12 +1,32 @@
 //! Basic example that produces a 1Hz square-wave on Pin PE1
 
+// Basic RUST tutorial
+// Crate: A package in RUST
+// Modules: files or folders within a crate that organize code
+
 // #![deny(warnings)]
 #![no_main]
 #![no_std]
 
+// Imports
+// pac is a module being imported from crate (peripheral access crate)
+// prelude is another module being imported, the asterix means import everything that's public inside it
+// I2C is a struct
+// {...} Means you can grab multiple items from one crate
+// :: imports modules like folder paths
+
+// Import example
+// # Python
+// from mylib import i2c
+// from mylib.i2c import I2c
+
+// # RUST
+// use mylib::i2c;
+// use mylib::i2c::I2c;
+
 use cortex_m_rt::entry;
 use panic_reset as _;
-use stm32h7xx_hal::{pac, prelude::*, i2c::I2c};
+use stm32h7xx_hal::{pac, prelude::*};
 use rtt_target::{rtt_init_print, rprintln};
 
 
@@ -36,46 +56,20 @@ fn main() -> ! {
     // Get the delay provider.
     let mut delay = cp.SYST.delay(ccdr.clocks);
 
+    // Loop variable
+    let mut count = 0;
+
     loop {
-        rprintln!("Test");
-        delay.delay_ms(1000_u16);
+        led.set_high();
+        delay.delay_ms(50_u16);
+        led.set_low();
+        delay.delay_ms(50_u16);
+
+        // Smaller loop for the print statmements
+        count += 1;
+        for x in 0..3 {
+            rprintln!("Outer Loop: {}, Inner Loop: {}", count, x);
+        }
+        rprintln!();
     }
-
-    // // Configure PB8 and PB9 as I2C.
-    // let gpiob = dp.GPIOB.split(ccdr.peripheral.GPIOB);
-    // gpiob.pb8.into_alternate::<4>().set_open_drain();
-    // gpiob.pb9.into_alternate::<4>().set_open_drain();
-    // let mut i2c = I2c::i2c1(dp.I2C1, 400.kHz(), ccdr.peripheral.I2C1, &ccdr.clocks);
-    
-    // // Write the register address we want to read from
-    // let register: u8 = 0xD0;
-    // let mut buffer: [u8; 1] = [0];
-
-    // // Main loop
-    // loop {
-    //     // Perform the read operation
-    //     match i2c.write_read(0x76, &[register], &mut buffer) {
-    //         Ok(_) => {
-    //             let value = buffer[0];
-    //             if value != 0 {
-    //                 led.set_high();
-    //                 rprintln!("It worked!: {}", buffer[0]);
-    //             } else {
-    //                 led.set_low();
-    //                 rprintln!("It didn't work!: {}", buffer[0]);
-    //             }
-    //             // Add a small delay between reads
-    //             delay.delay_ms(100_u16);
-    //         }
-    //         Err(e) => {
-    //             // Error handling with fast blinking
-    //             for _ in 0..5 {
-    //                 led.set_high();
-    //                 delay.delay_ms(100_u16);
-    //                 led.set_low();
-    //                 delay.delay_ms(100_u16);
-    //             }
-    //         }
-    //     }
-    // }
 }

@@ -30,6 +30,39 @@ use stm32h7xx_hal::{pac, prelude::*};
 use rtt_target::{rtt_init_log, rprintln};
 use log::{info, LevelFilter};
 
+use stm32h7xx_hal::hal::blocking::delay::DelayMs;
+use stm32h7xx_hal::hal::digital::v2::OutputPin;
+
+// Structs
+// Structs are basically classes
+struct Led<PIN, D> {
+    pin: PIN,
+    delay: D,
+}
+
+impl<PIN, D> Led<PIN, D>
+where
+    PIN: OutputPin,
+    D: DelayMs<u16>,
+{
+    fn new(pin: PIN, delay: D) -> Self {
+        Self { pin, delay }
+    }
+
+    /// Blinks the LED by setting it high, waiting for `ms` milliseconds,
+    /// setting it low, and waiting for `ms` milliseconds again.
+    ///
+    /// # Arguments
+    ///
+    /// * `ms`: The number of milliseconds to wait between each blink.
+    fn blink(&mut self, ms: u16) {
+        self.pin.set_high().ok();
+        self.delay.delay_ms(ms);
+        self.pin.set_low().ok();
+        self.delay.delay_ms(ms);
+    }
+}
+
 
 #[entry]
 fn main() -> ! {
@@ -53,14 +86,12 @@ fn main() -> ! {
     info!("Setting up clock...");
     let rcc = dp.RCC.constrain();
     let ccdr = rcc.sys_ck(100.MHz()).freeze(pwrcfg, &dp.SYSCFG);
-
     let gpioe = dp.GPIOE.split(ccdr.peripheral.GPIOE);
 
-    // Configure PE1 as output.
-    let mut led = gpioe.pe1.into_push_pull_output();
-
-    // Get the delay provider.
-    let mut delay = cp.SYST.delay(ccdr.clocks);
+    // LED class
+    let led_pin = gpioe.pe1.into_push_pull_output();
+    let delay = cp.SYST.delay(ccdr.clocks);
+    let mut led = Led::new(led_pin, delay);
 
     // Loop variable
     let mut count = 0;
@@ -69,10 +100,7 @@ fn main() -> ! {
     rprintln!();
 
     loop {
-        led.set_high();
-        delay.delay_ms(50_u16);
-        led.set_low();
-        delay.delay_ms(50_u16);
+        led.blink(1000);
 
         // Smaller loop for the print statmements
         count += 1;

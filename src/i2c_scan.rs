@@ -31,6 +31,10 @@ use stm32h7xx_hal::{pac, prelude::*};
 use rtt_target::{rtt_init_log, rprintln};
 use log::{info, LevelFilter};
 
+const GREEN: &str = "\x1b[32m";
+const RED: &str = "\x1b[31m";
+const RESET: &str = "\x1b[0m";
+
 #[entry]
 fn main() -> ! {
 
@@ -78,8 +82,8 @@ fn main() -> ! {
             // Match is like "switch" in python
             // Ok and Err are common across Rust as returns
             match i2c.write(addr, &dummy_data) {
-                Ok(()) => info!("Found device at address 0x{:02X}", addr),
-                Err(_) => info!("No device at address 0x{:02X}", addr),
+                Ok(()) => info!("{}Found device at address 0x{:02X}{}", GREEN, addr, RESET),
+                Err(_) => info!("{}No device at address 0x{:02X}{}", RED, addr, RESET),
             }
 
             // Delay to make sure the I2C bus is not overwhelmed

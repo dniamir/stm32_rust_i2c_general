@@ -14,5 +14,19 @@
     ],
     "group": "build"
     },
+
+    {
+      "label": "Build i2c_scan",
+      "type": "shell",
+      "command": "cargo",
+      "args": [
+        "build",
+        "--bin",
+        "i2c_scan",
+        "--target",
+        "thumbv7em-none-eabihf"
+      ],
+      "group": "build"
+    }
   ]
 }

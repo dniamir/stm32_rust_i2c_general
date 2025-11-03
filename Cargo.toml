@@ -6,6 +6,10 @@ name = "blinky"
 name = "blinky"
 path = "src/blinky.rs"
 
+[[bin]]
+name = "i2c_scan"
+path = "src/i2c_scan.rs"
+
 [profile.dev]
 panic = "abort"
 

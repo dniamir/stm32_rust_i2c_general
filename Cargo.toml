@@ -2,6 +2,10 @@
 edition = "2024"
 name = "blinky"
 
+[[bin]]
+name = "blinky"
+path = "src/blinky.rs"
+
 [profile.dev]
 panic = "abort"
 

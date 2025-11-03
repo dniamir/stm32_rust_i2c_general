@@ -1,38 +1,36 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Debug debug",
-            "request": "launch",
-            "type": "cortex-debug",
-            "cwd": "${workspaceFolder}",
-            "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/blinky",
-            // "svdFile": "${workspaceFolder}/inv_b_g431b_esc1/STM32G431xx.svd",
-            "servertype": "openocd",
-            "configFiles": [
-                "${workspaceFolder}/openocd.cfg"
-            ],
-            "preLaunchTask": "Build debug",
-            "preLaunchCommands": [
-                "monitor init",
-                "monitor reset init",
-                "monitor halt",
-            ],
-            "postLaunchCommands": [
-                // "break main",
-                "break HardFault",
-            ],
-            "interface": "swd",
-            "rttConfig": {
-                "enabled": true,
-                "address": "auto",
-                "decoders": [
-                    {
-                        "port": 0,
-                        "type": "console"
-                    }
-                ]
-            }
-        },
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug blinky",
+      "type": "cortex-debug",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/blinky",
+      "servertype": "openocd",
+      "configFiles": [
+        "${workspaceFolder}/openocd.cfg"
+      ],
+      "preLaunchTask": "Build blinky",
+      "preLaunchCommands": [
+        "monitor init",
+        "monitor reset init",
+        "monitor halt"
+      ],
+      "postLaunchCommands": [
+        "break HardFault"
+      ],
+      "interface": "swd",
+      "rttConfig": {
+        "enabled": true,
+        "address": "auto",
+        "decoders": [
+          {
+            "port": 0,
+            "type": "console"
+          }
+        ]
+      }
+    },
+  ]
 }

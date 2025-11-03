@@ -1,17 +1,18 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Build debug",
-            "type": "shell",
-            "command": "cargo",
-            "args": [
-                "build",
-                "--locked",
-                "--bin",
-                "blinky",
-            ],
-            "group": "build"
-        },
-    ]
+  "version": "2.0.0",
+
+  "tasks": [
+
+    {
+    "label": "Build blinky",
+    "type": "shell",
+    "command": "cargo",
+    "args": [
+        "build",
+        "--target",
+        "thumbv7em-none-eabihf"
+    ],
+    "group": "build"
+    },
+  ]
 }

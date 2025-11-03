@@ -57,22 +57,24 @@ fn main() -> ! {
     // LED class
     let gpioe = dp.GPIOE.split(ccdr.peripheral.GPIOE);
     let led_pin = gpioe.pe1.into_push_pull_output();
-    let delay = cp.SYST.delay(ccdr.clocks);
-    let mut led = Led::new(led_pin, delay);
-
-    // Loop variable
-    let mut count = 0;
+    let mut delay = cp.SYST.delay(ccdr.clocks);
+    let mut led = Led::new(led_pin);
 
     info!("Start Loop...");
+    let mut count = 0;
     rprintln!();
 
     loop {
-        led.blink(200);
+        led.blink(&mut delay, 1000);
 
         // Smaller loop for the print statmements
         count += 1;
         for x in 0..3 {
             rprintln!("Outer Loop: {}, Inner Loop: {}", count, x);
+
+            // Delay to make sure the I2C bus is not overwhelmed
+            // cortex_m::asm::delay(10_000);  // runs n CPU cycles. So if the clock is 100Mhz, this is 0.1ms
+            delay.delay_ms(10u16);
         }
         rprintln!();
     }

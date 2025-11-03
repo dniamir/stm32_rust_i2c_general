@@ -1,27 +1,30 @@
+// src/led.rs
 use stm32h7xx_hal::hal::digital::v2::OutputPin;
 use stm32h7xx_hal::hal::blocking::delay::DelayMs;
 
-// Represents an LED connected to a pin and delay provider.
-// Structs are basically classes
-pub struct Led<PIN, D> {
-    pin: PIN,
-    delay: D,
+pub struct Led<P>
+where
+    P: OutputPin,
+{
+    pin: P,
 }
 
-impl<PIN, D> Led<PIN, D>
+impl<P> Led<P>
 where
-    PIN: OutputPin,
-    D: DelayMs<u16>,
+    P: OutputPin,
 {
-    /// Blinks the LED once for the given duration.
-    pub fn new(pin: PIN, delay: D) -> Self {
-        Self { pin, delay }
+    pub fn new(pin: P) -> Self {
+        Self { pin }
     }
 
-    pub fn blink(&mut self, ms: u16) {
-        self.pin.set_high().ok();
-        self.delay.delay_ms(ms);
-        self.pin.set_low().ok();
-        self.delay.delay_ms(ms);
+    // pass delay in here
+    pub fn blink<D>(&mut self, delay: &mut D, ms: u32)
+    where
+        D: DelayMs<u32>,
+    {
+        let _ = self.pin.set_high();
+        delay.delay_ms(ms);
+        let _ = self.pin.set_low();
+        delay.delay_ms(ms);
     }
 }

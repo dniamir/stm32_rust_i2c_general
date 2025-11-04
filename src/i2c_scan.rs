@@ -11,6 +11,7 @@
 // Imports
 // pac is a module being imported from crate (peripheral access crate)
 // prelude is another module being imported, the asterix means import everything that's public inside it
+
 // I2C is a struct
 // {...} Means you can grab multiple items from one crate
 // :: imports modules like folder paths
@@ -25,6 +26,10 @@
 // use mylib::i2c::I2c;
 mod led;  // Tells the compiler to look for a file called led.rs
 use led::Led;
+
+mod chip;
+use chip::Chip;
+
 use cortex_m_rt::entry;
 use panic_reset as _;
 use stm32h7xx_hal::{pac, prelude::*};

@@ -10,6 +10,10 @@ path = "src/blinky.rs"
 name = "i2c_scan"
 path = "src/i2c_scan.rs"
 
+[[bin]]
+name = "bme680_example"
+path = "src/bme680_example.rs"
+
 [profile.dev]
 panic = "abort"
 
@@ -21,6 +25,7 @@ cortex-m = { version = "0.7.6", features = ["inline-asm", "critical-section-sing
 cortex-m-rt = "0.7.0"
 # embedded-hal = "0.2.6"
 panic-reset = "0.1"
+embedded-hal = "0.2.7"
 
 rtt-target = { version = "0.6.0", features = ["log"] }
 log = "0.4"

@@ -66,6 +66,40 @@
           }
         ]
       }
+    },
+
+      // Debug for bme680_example
+    {
+      "name": "Debug bme680_example",
+      "type": "cortex-debug",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/bme680_example",
+      "servertype": "openocd",
+      "configFiles": [
+        "${workspaceFolder}/openocd.cfg"
+      ],
+      "preLaunchTask": "Build bme680_example",
+      "preLaunchCommands": [
+        "monitor init",
+        "monitor reset init",
+        "monitor halt"
+      ],
+      "postLaunchCommands": [
+        "break HardFault"
+      ],
+      "interface": "swd",
+      "rttConfig": {
+        "enabled": true,
+        "address": "auto",
+        "decoders": [
+          {
+            "port": 0,
+            "type": "console"
+          }
+        ]
+      }
+      
     }
   ]
 }

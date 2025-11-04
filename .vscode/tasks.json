@@ -31,6 +31,21 @@
         "thumbv7em-none-eabihf"
       ],
       "group": "build"
-    }
+    },
+
+    // Build for bme680_example
+    {
+      "label": "Build bme680_example",
+      "type": "shell",
+      "command": "cargo",
+      "args": [
+        "build",
+        "--bin",
+        "bme680_example",
+        "--target",
+        "thumbv7em-none-eabihf"
+      ],
+      "group": "build"
+    },
   ]
 }

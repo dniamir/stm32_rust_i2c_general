@@ -1,6 +1,8 @@
 {
   "version": "0.2.0",
   "configurations": [
+
+    // Debug for Blinky
     {
       "name": "Debug blinky",
       "type": "cortex-debug",
@@ -32,6 +34,8 @@
         ]
       }
     },
+
+    // Debug for i2c_scan
     {
       "name": "Debug i2c_scan",
       "type": "cortex-debug",

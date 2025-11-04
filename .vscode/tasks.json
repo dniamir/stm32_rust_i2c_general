@@ -3,18 +3,22 @@
 
   "tasks": [
 
+    // Build for Blinky
     {
     "label": "Build blinky",
     "type": "shell",
     "command": "cargo",
     "args": [
         "build",
+        "--bin",
+        "blinky",  // Name of the binary to build - will only build this file and dependencies (i2c_scan.rs can be broken and this'll work)
         "--target",
         "thumbv7em-none-eabihf"
     ],
     "group": "build"
     },
 
+    // Build for i2c_scan
     {
       "label": "Build i2c_scan",
       "type": "shell",

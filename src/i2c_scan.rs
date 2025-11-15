@@ -27,8 +27,8 @@
 mod led;  // Tells the compiler to look for a file called led.rs
 use led::Led;
 
-mod chip;
-use chip::Chip;
+// mod chip;
+// use chip::Chip;
 
 use cortex_m_rt::entry;
 use panic_reset as _;

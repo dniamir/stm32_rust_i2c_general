@@ -90,7 +90,7 @@ fn main() -> ! {
         let reg_address = 0xD0;
         let reg_val = chip::reg_read(&mut i2c, 0x76, 0xD0).expect("Unable to read register");
 
-        info!("reg_address: {}, reg_val: {}", reg_address, reg_val);
+        info!("reg_address: 0x{:.02X}, reg_val: 0x{:.02X}", reg_address, reg_val);
         rprintln!();
     }
 }

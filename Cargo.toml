@@ -26,6 +26,9 @@ cortex-m-rt = "0.7.0"
 # embedded-hal = "0.2.6"
 panic-reset = "0.1"
 embedded-hal = "0.2.7"
+phf = { version = "0.11", default-features = false }
+phf_macros = { version = "0.11", default-features = false }  # Perfect Hash Functions (PHF) table for register lookup
+shared-bus = "0.3"  # Shared I2C buss
 
 rtt-target = { version = "0.6.0", features = ["log"] }
 log = "0.4"

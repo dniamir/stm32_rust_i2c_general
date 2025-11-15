@@ -26,13 +26,15 @@ mod led;  // Tells the compiler to look for a file called led.rs
 use led::Led;
 
 mod chip;
-use chip::BME680;
+use chip::Chip;
 
 use cortex_m_rt::entry;
 use panic_reset as _;
 use stm32h7xx_hal::{pac, prelude::*};
 use rtt_target::{rtt_init_log, rprintln};
 use log::{info, LevelFilter};
+
+use shared_bus;
 
 // const GREEN: &str = "\x1b[32m";
 // const RED: &str = "\x1b[31m";
@@ -65,7 +67,8 @@ fn main() -> ! {
     let gpiob = dp.GPIOB.split(ccdr.peripheral.GPIOB);
     let scl = gpiob.pb8.into_alternate_open_drain();
     let sda = gpiob.pb9.into_alternate_open_drain();
-    let mut i2c = dp.I2C1.i2c((scl, sda), 100.kHz(), ccdr.peripheral.I2C1, &ccdr.clocks);
+    let i2c = dp.I2C1.i2c((scl, sda), 50.kHz(), ccdr.peripheral.I2C1, &ccdr.clocks);
+    let i2c_manager = shared_bus::BusManagerSimple::new(i2c);  // This is the shared bus manager
 
     // LED class
     let gpioe = dp.GPIOE.split(ccdr.peripheral.GPIOE);
@@ -75,22 +78,46 @@ fn main() -> ! {
 
     // Set up BME680
     // 🔹 Probe for the chip
-    let mut bme = BME680::probe(&mut i2c).expect("Unable to initialize sensor");
+    // let mut bme = BME680::probe(&mut i2c).expect("Unable to initialize sensor");
+    let bme_address = 0x76;
+    let mut bme = Chip{i2c: i2c_manager.acquire_i2c(), i2c_addr: bme_address};
 
     // Start loop
     info!("Start Loop...");
+    let mut count = 0;
     rprintln!();
 
     loop {
+
+        count += 1;
+        info!("Count: {}", count);
+
         led.blink(&mut delay, 1000);
 
-        let _pressure = bme.read_pressure(&mut i2c);
+        // let _pressure = bme.read_pressure(&mut i2c);
 
         // Read register with generic register read
-        let reg_address = 0xD0;
-        let reg_val = chip::reg_read(&mut i2c, 0x76, 0xD0).expect("Unable to read register");
+        let _field_val1 = bme.read_field("chip_id").expect("Unable to read register");
+        let _field_val2 = bme.read_reg(0xD0).expect("Unable to read register");
 
-        info!("reg_address: 0x{:.02X}, reg_val: 0x{:.02X}", reg_address, reg_val);
         rprintln!();
+
+        bme.write_reg(0x74, 0b11100011).expect("Unable to read register");
+        bme.read_reg(0x74).expect("Unable to read register");
+        bme.read_field("osrs_t").expect("Unable to read register");
+
+        rprintln!();
+
+        bme.write_reg(0x74, 0b00011100).expect("Unable to read register");
+        bme.read_reg(0x74).expect("Unable to read register");
+        bme.read_field("osrs_t").expect("Unable to read register");
+
+        rprintln!();
+
+        bme.write_field("osrs_t", 0b101).expect("Unable to read register");
+        bme.read_field("osrs_t").expect("Unable to read register");
+
+        rprintln!();
+
     }
 }

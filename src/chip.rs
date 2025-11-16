@@ -20,30 +20,17 @@ pub struct Chip<I2C> {
 
 impl<I2C: i2c::WriteRead> Chip<I2C> {
 
-    pub fn read_reg(&mut self, reg: u8) -> Result<u8, I2CError<I2C>> {
-        // Basic function to read registers by numerical address
-        let mut buf = [0];
-        self.i2c.write_read(self.i2c_addr, &[reg], &mut buf).map_err(I2CError::I2CError)?;
-        let reg_value = buf[0];
+    pub fn read_regs(&mut self, reg: u8, reg_values: &mut [u8]) -> Result<(), I2CError<I2C>> {
+        // Basic function to read multiple registers
+        self.i2c.write_read(self.i2c_addr, &[reg], reg_values).map_err(I2CError::I2CError)?;
 
-        info!("Read Register: 0x{:.02X}, {:08b}, 0x{:.02X}, {}", reg, reg_value, reg_value, reg_value);
+        let mut reg_idx = 0;
+        for reg_value in reg_values.iter() {
+            info!("Read Registers: 0x{:.02X}, {:08b}, 0x{:.02X}, {}", reg + reg_idx, reg_value, reg_value, reg_value);
+            reg_idx += 1;
+        }
 
-        Ok(reg_value)
-    }
-
-    pub fn read_reg_str(&mut self, reg_str: &str) -> Result<u8, I2CError<I2C>> {
-        // Basic function to read registers by name
-        let reg_dets = get_field(reg_str).ok_or(I2CError::NotFound)?;
-
-        // Just read the raw register value
-        let old = log::max_level();
-        log::set_max_level(log::LevelFilter::Off);
-        let reg_value = self.read_reg(reg_dets.reg)?;
-        log::set_max_level(old);
-
-        info!("Read Register: {}, {:08b}, 0x{:.02X}, {}", reg_str, reg_value, reg_value, reg_value);
-
-        Ok(reg_value)
+        Ok(())
     }
 
     pub fn write_reg(&mut self, reg: u8, reg_val: u8) -> Result<(), I2CError<I2C>> {
@@ -56,15 +43,60 @@ impl<I2C: i2c::WriteRead> Chip<I2C> {
         Ok(())
     }
 
+    pub fn read_regs_str(&mut self, reg_str: &str, reg_values: &mut [u8]) -> Result<(), I2CError<I2C>> {
+        // Basic function to read multiple registers
+        let reg_dets = get_field(reg_str).ok_or(I2CError::NotFound)?;
+
+        // Just read the raw register value
+        // let old_level = log::max_level();
+        // log::set_max_level(log::LevelFilter::Off);
+        self.read_regs(reg_dets.reg, reg_values)?;
+        // log::set_max_level(old_level);
+
+        // let reg_value = reg_values[0];
+        // info!("Read Register: {}, {:08b}, 0x{:.02X}, {}", reg_str, reg_value, reg_value, reg_value);
+
+        Ok(())
+    }
+    
+    pub fn read_reg(&mut self, reg: u8) -> Result<u8, I2CError<I2C>> {
+        // Basic function to read registers by numerical address
+        let mut reg_vals = [0];
+        let old_level = log::max_level();
+        log::set_max_level(log::LevelFilter::Off);
+        self.read_regs(reg, &mut reg_vals)?;
+        log::set_max_level(old_level);
+
+        let reg_value = reg_vals[0];
+        info!("Read Register: 0x{:.02X}, {:08b}, 0x{:.02X}, {}", reg, reg_value, reg_value, reg_value);
+
+        Ok(reg_value)
+    }
+
+    pub fn read_reg_str(&mut self, reg_str: &str) -> Result<u8, I2CError<I2C>> {
+        // Basic function to read registers by name
+        let reg_dets = get_field(reg_str).ok_or(I2CError::NotFound)?;
+
+        // Just read the raw register value
+        let old_level = log::max_level();
+        log::set_max_level(log::LevelFilter::Off);
+        let reg_value = self.read_reg(reg_dets.reg)?;
+        log::set_max_level(old_level);
+
+        info!("Read Register: {}, {:08b}, 0x{:.02X}, {}", reg_str, reg_value, reg_value, reg_value);
+
+        Ok(reg_value)
+    }
+
     pub fn write_reg_str(&mut self, reg_str: &str, reg_val: u8) -> Result<(), I2CError<I2C>> {
         // Basic function to write registers by name
         let reg_dets = get_field(reg_str).ok_or(I2CError::NotFound)?;
 
         // Write the register
-        let old = log::max_level();
+        let old_level = log::max_level();
         log::set_max_level(log::LevelFilter::Off);
         self.write_reg(reg_dets.reg, reg_val)?;
-        log::set_max_level(old);
+        log::set_max_level(old_level);
 
         info!("Write Register: {}, {:08b}, 0x{:.02X}, {}", reg_str, reg_val, reg_val, reg_val);
 
@@ -119,10 +151,10 @@ impl<I2C: i2c::WriteRead> Chip<I2C> {
         let field_val = (cleared | inserted) as u8;   // back to u8
     
         // Write register
-        let old = log::max_level();
+        let old_level = log::max_level();
         log::set_max_level(log::LevelFilter::Off);
         self.write_reg(field_reg, field_val)?;
-        log::set_max_level(old);
+        log::set_max_level(old_level);
 
         info!("Write Field: {}, {:0width$b}, 0x{:.02X}, {}", field, field_val, field_val, field_val, width=field_bits as usize);
 
@@ -153,7 +185,10 @@ pub static FIELD_MAP: Map<&'static str, Field> = phf_map! {
     "osrs_t" => Field { reg: 0x74, offset: 5, bits: 3, writable: true },
     "osrs_p" => Field { reg: 0x74, offset: 2, bits: 3, writable: true },
     "mode" => Field { reg: 0x74, offset: 0, bits: 2, writable: true },
+
+    "Ctrl_hum" => Field { reg: 0x72, offset: 0, bits: 8, writable: true },
     "osrs_h" => Field { reg: 0x72, offset: 0, bits: 3, writable: true },
+
     "ctrl_gas_1" => Field { reg: 0x71, offset: 0, bits: 8, writable: true },
     "ctrl_gas_0" => Field { reg: 0x70, offset: 4, bits: 2, writable: true },
     "run_gas" => Field { reg: 0x71, offset: 4, bits: 1, writable: true },

@@ -25,6 +25,8 @@
 mod led;  // Tells the compiler to look for a file called led.rs
 use led::Led;
 
+// mod bme680;
+
 mod chip;
 use chip::Chip;
 
@@ -121,6 +123,11 @@ fn main() -> ! {
 
         bme.write_reg_str("osrs_t", 0b101).expect("Unable to read register");
         bme.read_reg_str("osrs_t").expect("Unable to read register");
+
+        rprintln!();
+
+        let reg_vals = &mut [0u8; 4];
+        bme.read_regs_str("Ctrl_hum", reg_vals).expect("Unable to read register");
 
         rprintln!();
 

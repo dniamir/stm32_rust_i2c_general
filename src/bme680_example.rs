@@ -119,5 +119,10 @@ fn main() -> ! {
 
         rprintln!();
 
+        bme.write_reg_str("osrs_t", 0b101).expect("Unable to read register");
+        bme.read_reg_str("osrs_t").expect("Unable to read register");
+
+        rprintln!();
+
     }
 }

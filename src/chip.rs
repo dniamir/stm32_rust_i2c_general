@@ -21,19 +21,33 @@ pub struct Chip<I2C> {
 impl<I2C: i2c::WriteRead> Chip<I2C> {
 
     pub fn read_reg(&mut self, reg: u8) -> Result<u8, I2CError<I2C>> {
-        // Basic function to read registers
+        // Basic function to read registers by numerical address
         let mut buf = [0];
         self.i2c.write_read(self.i2c_addr, &[reg], &mut buf).map_err(I2CError::I2CError)?;
         let reg_value = buf[0];
 
         info!("Read Register: 0x{:.02X}, {:08b}, 0x{:.02X}, {}", reg, reg_value, reg_value, reg_value);
-        log::set_max_level(log::LevelFilter::Info);
+
+        Ok(reg_value)
+    }
+
+    pub fn read_reg_str(&mut self, reg_str: &str) -> Result<u8, I2CError<I2C>> {
+        // Basic function to read registers by name
+        let reg_dets = get_field(reg_str).ok_or(I2CError::NotFound)?;
+
+        // Just read the raw register value
+        let old = log::max_level();
+        log::set_max_level(log::LevelFilter::Off);
+        let reg_value = self.read_reg(reg_dets.reg)?;
+        log::set_max_level(old);
+
+        info!("Read Register: {}, {:08b}, 0x{:.02X}, {}", reg_str, reg_value, reg_value, reg_value);
 
         Ok(reg_value)
     }
 
     pub fn write_reg(&mut self, reg: u8, reg_val: u8) -> Result<(), I2CError<I2C>> {
-        // Basic function to write registers
+        // Basic function to write registers by numerical address
         let mut buf = [0];
         self.i2c.write_read(self.i2c_addr, &[reg, reg_val], &mut buf).map_err(I2CError::I2CError)?;
 
@@ -42,8 +56,23 @@ impl<I2C: i2c::WriteRead> Chip<I2C> {
         Ok(())
     }
 
+    pub fn write_reg_str(&mut self, reg_str: &str, reg_val: u8) -> Result<(), I2CError<I2C>> {
+        // Basic function to write registers by name
+        let reg_dets = get_field(reg_str).ok_or(I2CError::NotFound)?;
+
+        // Write the register
+        let old = log::max_level();
+        log::set_max_level(log::LevelFilter::Off);
+        self.write_reg(reg_dets.reg, reg_val)?;
+        log::set_max_level(old);
+
+        info!("Write Register: {}, {:08b}, 0x{:.02X}, {}", reg_str, reg_val, reg_val, reg_val);
+
+        Ok(())
+    }
+
     pub fn read_field(&mut self, field: &str) -> Result<u8, I2CError<I2C>> {
-        // Basic function to read a field, within a register
+        // Basic function to read a field by name, within a register
         // Will use a lookup table based on the field name
         
         // Get field details
@@ -68,7 +97,7 @@ impl<I2C: i2c::WriteRead> Chip<I2C> {
     }
 
     pub fn write_field(&mut self, field: &str, field_val: u8) -> Result<(), I2CError<I2C>> {
-        // Basic function to write fields, within a register
+        // Basic function to write a field by name, within a register
         // Will use a lookup table based on the field name
 
         // Get field details
@@ -90,7 +119,10 @@ impl<I2C: i2c::WriteRead> Chip<I2C> {
         let field_val = (cleared | inserted) as u8;   // back to u8
     
         // Write register
+        let old = log::max_level();
+        log::set_max_level(log::LevelFilter::Off);
         self.write_reg(field_reg, field_val)?;
+        log::set_max_level(old);
 
         info!("Write Field: {}, {:0width$b}, 0x{:.02X}, {}", field, field_val, field_val, field_val, width=field_bits as usize);
 

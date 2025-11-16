@@ -47,5 +47,20 @@
       ],
       "group": "build"
     },
+
+    // Build for bme680_read
+    {
+      "label": "Build bme680_read",
+      "type": "shell",
+      "command": "cargo",
+      "args": [
+        "build",
+        "--bin",
+        "bme680_read",
+        "--target",
+        "thumbv7em-none-eabihf"
+      ],
+      "group": "build"
+    },
   ]
 }

@@ -100,6 +100,40 @@
         ]
       }
       
+    },
+
+    // Debug for bme680_read
+    {
+      "name": "Debug bme680_read",
+      "type": "cortex-debug",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/bme680_read",
+      "servertype": "openocd",
+      "configFiles": [
+        "${workspaceFolder}/openocd.cfg"
+      ],
+      "preLaunchTask": "Build bme680_read",
+      "preLaunchCommands": [
+        "monitor init",
+        "monitor reset init",
+        "monitor halt"
+      ],
+      "postLaunchCommands": [
+        "break HardFault"
+      ],
+      "interface": "swd",
+      "rttConfig": {
+        "enabled": true,
+        "address": "auto",
+        "decoders": [
+          {
+            "port": 0,
+            "type": "console"
+          }
+        ]
+      }
+      
     }
   ]
 }

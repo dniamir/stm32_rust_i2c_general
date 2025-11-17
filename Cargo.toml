@@ -1,6 +1,6 @@
 [package]
 edition = "2024"
-name = "blinky"
+name = "rust_general"
 
 [[bin]]
 name = "blinky"

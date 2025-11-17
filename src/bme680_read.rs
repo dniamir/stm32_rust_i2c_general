@@ -4,13 +4,9 @@
 #![no_main]
 #![no_std]
 
-mod led;  // Tells the compiler to look for a file called led.rs
-use led::Led;
-
-mod bme680;
-
-mod chip;
-use chip::Chip;
+use rust_general::led::Led;
+use rust_general::chip::Chip;
+use rust_general::bme680::BME680;
 
 use cortex_m_rt::entry;
 use panic_reset as _;

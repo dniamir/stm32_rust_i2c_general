@@ -24,11 +24,7 @@
 // # RUST
 // use mylib::i2c;
 // use mylib::i2c::I2c;
-mod led;  // Tells the compiler to look for a file called led.rs
-use led::Led;
-
-// mod chip;
-// use chip::Chip;
+use rust_general::led::Led;
 
 use cortex_m_rt::entry;
 use panic_reset as _;

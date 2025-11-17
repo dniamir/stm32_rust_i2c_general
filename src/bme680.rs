@@ -7,6 +7,7 @@ use core::fmt::Write;
 
 use crate::chip::Chip;
 use crate::chip::I2CError;
+use crate::chip_map::{Field, FieldMapProvider};
 
 pub struct BME680<I2C> {
     pub chip: Chip<I2C>,

@@ -1,27 +1,8 @@
 // Basic RUST tutorial
-// Crate: A package in RUST
-// Modules: files or folders within a crate that organize code
-
 // #![deny(warnings)]
 #![no_main]
 #![no_std]
 
-// Imports
-// pac is a module being imported from crate (peripheral access crate)
-// prelude is another module being imported, the asterix means import everything that's public inside it
-
-// I2C is a struct
-// {...} Means you can grab multiple items from one crate
-// :: imports modules like folder paths
-
-// Import example
-// # Python
-// from mylib import i2c
-// from mylib.i2c import I2c
-
-// # RUST
-// use mylib::i2c;
-// use mylib::i2c::I2c;
 use rust_general::led::Led;
 use rust_general::chip::Chip;
 
@@ -32,10 +13,6 @@ use rtt_target::{rtt_init_log, rprintln};
 use log::{info, LevelFilter};
 
 use shared_bus;
-
-// const GREEN: &str = "\x1b[32m";
-// const RED: &str = "\x1b[31m";
-// const RESET: &str = "\x1b[0m";
 
 #[entry]
 fn main() -> ! {
@@ -73,10 +50,9 @@ fn main() -> ! {
     let mut delay = cp.SYST.delay(ccdr.clocks);
     let mut led = Led::new(led_pin);
 
-    // Set up BME680
-    // 🔹 Probe for the chip
+    // Set up for generic chip
     let bme_address = 0x76;
-    let mut bme_chip = Chip::new_generic(i2c_manager.acquire_i2c(), bme_address);
+    let mut chip = Chip::new_generic(i2c_manager.acquire_i2c(), bme_address);
 
     // Start loop
     info!("Start Loop...");
@@ -90,38 +66,23 @@ fn main() -> ! {
 
         led.blink(&mut delay, 1000);
 
-        // let _pressure = bme.read_pressure(&mut i2c);
-
         // Read register with generic register read
-        // let _field_val1 = bme_chip.read_field("chip_id").expect("Unable to read register");
-        let _field_val2 = bme_chip.read_reg(0xD0).expect("Unable to read register");
+        let _field_val2 = chip.read_reg(0xD0).expect("Unable to read register");
 
         rprintln!();
 
-        bme_chip.write_reg(0x74, 0b11100011).expect("Unable to read register");
-        bme_chip.read_reg(0x74).expect("Unable to read register");
-        // bme_chip.read_field("osrs_t").expect("Unable to read register");
+        chip.write_reg(0x74, 0b11100011).expect("Unable to read register");
+        chip.read_reg(0x74).expect("Unable to read register");
 
         rprintln!();
 
-        bme_chip.write_reg(0x74, 0b00011100).expect("Unable to read register");
-        bme_chip.read_reg(0x74).expect("Unable to read register");
-        // bme_chip.read_field("osrs_t").expect("Unable to read register");
-
-        rprintln!();
-
-        // bme_chip.write_field("osrs_t", 0b101).expect("Unable to read register");
-        // bme_chip.read_field("osrs_t").expect("Unable to read register");
-
-        rprintln!();
-
-        // bme_chip.write_reg_str("osrs_t", 0b101).expect("Unable to read register");
-        // bme_chip.read_reg_str("osrs_t").expect("Unable to read register");
+        chip.write_reg(0x74, 0b00011100).expect("Unable to read register");
+        chip.read_reg(0x74).expect("Unable to read register");
 
         rprintln!();
 
         let reg_vals = &mut [0u8; 4];
-        // bme_chip.read_regs_str("Ctrl_hum", reg_vals).expect("Unable to read register");
+        chip.read_regs(0x74, reg_vals).expect("Unable to read register");
 
         rprintln!();
 

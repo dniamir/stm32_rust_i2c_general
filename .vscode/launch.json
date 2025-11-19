@@ -68,18 +68,18 @@
       }
     },
 
-      // Debug for bme680_example
+      // Debug for bme680_read
     {
-      "name": "Debug bme680_example",
+      "name": "Debug bme680_read",
       "type": "cortex-debug",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/bme680_example",
+      "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/bme680_read",
       "servertype": "openocd",
       "configFiles": [
         "${workspaceFolder}/openocd.cfg"
       ],
-      "preLaunchTask": "Build bme680_example",
+      "preLaunchTask": "Build bme680_read",
       "preLaunchCommands": [
         "monitor init",
         "monitor reset init",
@@ -102,18 +102,18 @@
       
     },
 
-    // Debug for bme680_read
+    // Debug for chip_read
     {
-      "name": "Debug bme680_read",
+      "name": "Debug chip_read",
       "type": "cortex-debug",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/bme680_read",
+      "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/chip_read",
       "servertype": "openocd",
       "configFiles": [
         "${workspaceFolder}/openocd.cfg"
       ],
-      "preLaunchTask": "Build bme680_read",
+      "preLaunchTask": "Build chip_read",
       "preLaunchCommands": [
         "monitor init",
         "monitor reset init",

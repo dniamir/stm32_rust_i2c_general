@@ -35,13 +35,13 @@
 
     // Build for bme680_example
     {
-      "label": "Build bme680_example",
+      "label": "Build chip_read",
       "type": "shell",
       "command": "cargo",
       "args": [
         "build",
         "--bin",
-        "bme680_example",
+        "chip_read",
         "--target",
         "thumbv7em-none-eabihf"
       ],

@@ -11,8 +11,8 @@ name = "i2c_scan"
 path = "src/i2c_scan.rs"
 
 [[bin]]
-name = "bme680_example"
-path = "src/bme680_example.rs"
+name = "chip_read"
+path = "src/chip_read.rs"
 
 [[bin]]
 name = "bme680_read"

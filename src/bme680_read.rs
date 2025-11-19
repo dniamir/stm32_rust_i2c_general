@@ -75,13 +75,40 @@ fn main() -> ! {
 
         led.blink(&mut delay, 1000);
 
-        // let _pressure = bme.read_pressure(&mut i2c);
-
         // Read register with generic register read
-        let _field_val1 = bme.chip.read_field("chip_id").expect("Unable to read register");
-        let _field_val2 = bme.chip.read_reg(0xD0).expect("Unable to read register");
+        bme.chip.read_field("chip_id").expect("Unable to read register");
+        bme.chip.read_reg(0xD0).expect("Unable to read register");
 
-        let _temperature = bme.read_temperature().expect("Unable to read temperature");
+        rprintln!();
+
+        bme.chip.write_reg(0x74, 0b11100011).expect("Unable to read register");
+        bme.chip.read_reg(0x74).expect("Unable to read register");
+        bme.chip.read_field("osrs_t").expect("Unable to read register");
+
+        rprintln!();
+
+        bme.chip.write_reg(0x74, 0b00011100).expect("Unable to read register");
+        bme.chip.read_reg(0x74).expect("Unable to read register");
+        bme.chip.read_field("osrs_t").expect("Unable to read register");
+
+        rprintln!();
+
+        bme.chip.write_field("osrs_t", 0b101).expect("Unable to read register");
+        bme.chip.read_field("osrs_t").expect("Unable to read register");
+
+        rprintln!();
+
+        bme.chip.write_reg_str("osrs_t", 0b101).expect("Unable to read register");
+        bme.chip.read_reg_str("osrs_t").expect("Unable to read register");
+
+        rprintln!();
+
+        let reg_vals = &mut [0u8; 4];
+        bme.chip.read_regs_str("Ctrl_hum", reg_vals).expect("Unable to read register");
+
+        rprintln!();
+
+        bme.read_temperature().expect("Unable to read temperature");
 
         rprintln!();
 

@@ -133,7 +133,7 @@ where
         Ok(())
     }
 
-    pub fn read_temperature(&mut self) -> Result<(i32), I2CError<I2C>> {
+    pub fn read_temperature(&mut self) -> Result<i32, I2CError<I2C>> {
         let old_level = log::max_level();
         log::set_max_level(log::LevelFilter::Off);
 

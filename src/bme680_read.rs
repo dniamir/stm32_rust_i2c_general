@@ -59,8 +59,8 @@ fn main() -> ! {
     // Set up BME680
     // 🔹 Probe for the chip
     let bme_address = 0x76;
-    let bme_chip = Chip{i2c: i2c_manager.acquire_i2c(), i2c_addr: bme_address};
-    let mut bme = bme680::BME680::new(bme_chip).expect("failed to init bme");
+    let bme_chip = Chip{i2c: i2c_manager.acquire_i2c(), i2c_addr: bme_address, _map: core::marker::PhantomData};
+    let mut bme = BME680::new(bme_chip).expect("failed to init bme");
     bme.config(1).expect("Unable to configure BME680");
 
     // Start loop

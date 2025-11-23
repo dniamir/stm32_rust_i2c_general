@@ -68,7 +68,40 @@
       }
     },
 
-      // Debug for bme680_read
+    // Debug for chip_read
+    {
+      "name": "Debug chip_read",
+      "type": "cortex-debug",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/chip_read",
+      "servertype": "openocd",
+      "configFiles": [
+        "${workspaceFolder}/openocd.cfg"
+      ],
+      "preLaunchTask": "Build chip_read",
+      "preLaunchCommands": [
+        "monitor init",
+        "monitor reset init",
+        "monitor halt"
+      ],
+      "postLaunchCommands": [
+        "break HardFault"
+      ],
+      "interface": "swd",
+      "rttConfig": {
+        "enabled": true,
+        "address": "auto",
+        "decoders": [
+          {
+            "port": 0,
+            "type": "console"
+          }
+        ]
+      }
+    },
+
+    // Debug for bme680_read
     {
       "name": "Debug bme680_read",
       "type": "cortex-debug",
@@ -102,38 +135,5 @@
       
     },
 
-    // Debug for chip_read
-    {
-      "name": "Debug chip_read",
-      "type": "cortex-debug",
-      "request": "launch",
-      "cwd": "${workspaceFolder}",
-      "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/chip_read",
-      "servertype": "openocd",
-      "configFiles": [
-        "${workspaceFolder}/openocd.cfg"
-      ],
-      "preLaunchTask": "Build chip_read",
-      "preLaunchCommands": [
-        "monitor init",
-        "monitor reset init",
-        "monitor halt"
-      ],
-      "postLaunchCommands": [
-        "break HardFault"
-      ],
-      "interface": "swd",
-      "rttConfig": {
-        "enabled": true,
-        "address": "auto",
-        "decoders": [
-          {
-            "port": 0,
-            "type": "console"
-          }
-        ]
-      }
-      
-    }
   ]
 }
